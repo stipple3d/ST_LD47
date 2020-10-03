@@ -40,17 +40,223 @@ class LD47GameC{
 			}
 		}
 
-		//make a blocked tile for testing
-		//this.grid[4][1].tileState = 'block';
+		//array of blocks (will be playable in order as each is collected)
+		this.blocks = [
+		{row: 4, col: 1},
+		{row: 6, col: 5},
+		{row: 3, col: 3},
+		{row: 2, col: 8},
+		{row: 4, col: 4},
+		{row: 5, col: 6}
+		];
+
+		//turn on first block
+		this.blockIndex = 0;
+		this.grid[this.blocks[this.blockIndex].row][this.blocks[this.blockIndex].col].tileState = 'block';
+
+		//array of blocks (will be playable in order as each is collected)
+		this.initWalls = [
+		{row: 4, col: 1},
+		{row: 4, col: 1},
+		{row: 4, col: 1},
+		{row: 4, col: 1},
+		{row: 4, col: 1},
+		{row: 4, col: 1}
+		];
+
+		//change all initWall Tile's states to 'wall'
+
+
+
+
+		this.playerSpeed = 80;
+		this.playerRadius = (this.tileWidth/2) *.7;
+		this.playerX = canvas.width /2;
+		this.playerY = canvas.height /2;
+
+		//store the players (center) Row/Col for use in identifying neighbors to check collisions against
+		this.playerRow = Math.floor(this.playerY / this.tileHeight);
+		this.playerCol = Math.floor(this.playerX / this.tileWidth);
 
 		//make the center tile an end state
-		//this.grid[Math.floor(this.gridRows / 2)][Math.floor(this.gridCols /2)].tileState = 'end';
+		this.grid[Math.floor(this.gridRows / 2)][Math.floor(this.gridCols /2)].tileState = 'end';
+	
+
 	}
+
+	updatePlayerPosition = function(_pX, _pY){
+		
+		this.playerX = _pX;
+		this.playerY = _pY;
+
+		//store Row/Col for next move
+		this.playerRow = Math.floor(this.playerY / this.tileHeight);
+		this.playerCol = Math.floor(this.playerX / this.tileWidth);
+
+
+		//check if the new tile (center point) is a block
+		if(this.grid[this.playerRow][this.playerCol].tileState == 'block'){
+
+			//if it is, make it an open tile now
+			this.grid[this.playerRow][this.playerCol].tileState = 'open';
+
+			//activate the next block in the blocks array (if there are any left)
+			this.blockIndex ++;
+			if(this.blockIndex < this.blocks.length){
+				this.grid[this.blocks[this.blockIndex].row][this.blocks[this.blockIndex].col].tileState = 'block';
+			}
+
+		}
+
+
+	}
+
 	//NOTE: _dt is coming from gameLoop
 	update = (_dt) =>{
 
+		//MOVE PLAYER
+
+		//calculate X/Y change values based on input keys
+		var changeX = 0;
+		var changeY = 0;
+
+		if(inputHandler.leftPressed)
+			changeX -= this.playerSpeed * _dt;
+		if(inputHandler.rightPressed)
+			changeX += this.playerSpeed * _dt;
+		if(inputHandler.upPressed)
+			changeY -= this.playerSpeed * _dt;
+		if(inputHandler.downPressed)
+			changeY += this.playerSpeed * _dt;
+
+		//only process player collisions and surround tiles if the player is moving
+		if(changeX != 0 || changeY != 0){
+
+			//new potential X/Y is the current position plus the change in each direction
+			var potX = this.playerX + changeX;
+			var potY = this.playerY + changeY;
+
+			//figure out what POTENTIAL tile the CENTER of the player WOULD BE in (Row/Col)
+			//var potRow = Math.floor(constrainedY / this.tileHeight);
+			//var potCol = Math.floor(constrainedX / this.tileWidth);
+
+			var potTopY = potY - this.playerRadius;
+			var potBottomY = potY + this.playerRadius; 
+			var potLeftX = potX - this.playerRadius;
+			var potRightX = potX + this.playerRadius;
+
+			//NOTE: assuming that the player can never go into the outer ring of tiles
+			//		(otherwise the neighbor checks will break)
+
+			//first check L/R collisions
+			if(changeX > 0){
+				//MOVING RIGHT
+
+				//is the right side of the player beyond the previous moves tile's right edge 
+				//(are we moving into a new column?)
+				if(potRightX > (this.playerCol + 1) * this.tileWidth){
+
+					//NE tile is wall AND potTop is extending into next tile up
+					//OR.... E tile is a wall (can we assume we are at least a little inside the bounds of the E tile, vertically?)
+					//OR.... SE tile is a wall AND potBottom is extending into the next tile down
+					if(			(this.grid[this.playerRow -1][this.playerCol +1].tileState == 'wall' && potTopY < this.playerRow * this.tileHeight) ||
+								this.grid[this.playerRow][this.playerCol +1].tileState == 'wall' ||
+								(this.grid[this.playerRow +1][this.playerCol +1].tileState == 'wall' && potBottomY > this.playerRow * this.tileHeight + this.tileHeight)
+						){
+						//constrain to the RIGHT edge of the current tile
+						potX = (this.playerCol * this.tileWidth + this.tileWidth) - this.playerRadius;
+					}
+					
+				}
+				//else, not moving outside of current tile horizontally
+
+			}
+			else if(changeX < 0){
+				//MOVING LEFT
+
+				//is the left side of the player beyond the previous moves tile's left edge 
+				//(are we moving into a new column?)
+				if(potLeftX < this.playerCol * this.tileWidth){
+
+					//NW tile is wall AND potTop is extending into next tile up
+					//OR.... W tile is a wall (can we assume we are at least a little inside the bounds of the E tile, vertically?)
+					//OR.... SW tile is a wall AND potBottom is extending into the next tile down
+					if(			(this.grid[this.playerRow -1][this.playerCol -1].tileState == 'wall' && potTopY < this.playerRow * this.tileHeight) ||
+								this.grid[this.playerRow][this.playerCol -1].tileState == 'wall' ||
+								(this.grid[this.playerRow +1][this.playerCol -1].tileState == 'wall' && potBottomY > this.playerRow * this.tileHeight + this.tileHeight)
+						){
+						//constrain to the LEFT edge of the current tile
+						potX = this.playerCol * this.tileWidth + this.playerRadius;
+					}
+					
+				}
+				//else, not moving outside of current tile horizontally
+
+			}
+			//ELSE NO L/R MOVEMENT
+
+			//then,  check U/D collisions
+			if(changeY > 0){
+				//MOVING DOWN
+
+				//is the bottom of the player beyond the previous moves tile's top edge
+				//(are we moving to a new tile)
+				if(potBottomY > (this.playerRow * this .tileHeight) + this.tileHeight){
+
+					//SW tile is a wall AND potLeft is extending into next tile left
+					//OR... S tile is a wall (can we assume we are at least a little inside the bounds of the S tile, horizontally?)
+					//OR... SE tile is a wall AND potRight is extending into the tile Right
+					if(			(this.grid[this.playerRow +1][this.playerCol -1].tileState == 'wall' && potLeftX < this.playerCol * this.tileWidth) ||
+								this.grid[this.playerRow +1][this.playerCol].tileState == 'wall' ||
+								(this.grid[this.playerRow +1][this.playerCol +1].tileState == 'wall' && potRightX > this.playerCol * this.tileWidth + this.tileWidth)
+						){
+						//constrain to the BOTTOM edge of the current tile
+						potY = this.playerRow * this.tileHeight + this.tileHeight - this.playerRadius;
+					}
+				}
+
+			}
+			else if(changeY < 0){
+				//MOVING UP
+
+				//is the top of the player beyond the previous moves tile's top edge
+				//(are we moving to a new tile)
+				if(potTopY < this.playerRow * this .tileHeight){
+
+					//NW tile is a wall AND potLeft is extending into next tile left
+					//OR... N tile is a wall (can we assume we are at least a little inside the bounds of the N tile, horizontally?)
+					//OR... NE tile is a wall AND potRight is extending into the tile Right
+					if(			(this.grid[this.playerRow -1][this.playerCol -1].tileState == 'wall' && potLeftX < this.playerCol * this.tileWidth) ||
+								this.grid[this.playerRow -1][this.playerCol].tileState == 'wall' ||
+								(this.grid[this.playerRow -1][this.playerCol +1].tileState == 'wall' && potRightX > this.playerCol * this.tileWidth + this.tileWidth)
+						){
+						//constrain to the TOP edge of the current tile
+						potY = this.playerRow * this.tileHeight + this.playerRadius;
+					}
+				}
+
+			}
+			//ELSE NO U/D MOVEMENT
+
+			//move player to new position
+			this.updatePlayerPosition(potX, potY);
+
+			//if that tile is the current block, turn it to an open tile
+
+			//keep track of what tile(s) the player is in (if the loop hits the player, 
+			//what happens?)
+
+
+		}
+
+		
+
+		//MOVE LOOP
+
 		//activate the CURRENT loop tile
 		this.grid[this.loopRow][this.loopCol].activate();
+
+		//check if the 
 
 		//move the loop for the next step
 		if(this.dir == 'right'){
@@ -121,6 +327,18 @@ class LD47GameC{
 				this.grid[row][col].draw();
 			}
 		}
+
+		//DRAW PLAYER
+		context.beginPath();
+		context.fillStyle = 'green';
+		context.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI *2);
+		context.fill();
+
+		//write directions on screen
+		context.beginPath();
+		context.fillStyle = 'white';
+		context.font = "30px Arial";
+		context.fillText('L: ' + inputHandler.leftPressed + ', R: ' + inputHandler.rightPressed, 10,26);
 
 		context.restore();
 	}
