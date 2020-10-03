@@ -25,51 +25,47 @@ class LD47GameC{
 		if(this.stepIn)
 			this.bounds.top ++;
 
+		var currIndex = 0;
+
 		for(var row = 0; row < this.gridRows; row++){
 			this.grid[row] = [];
 			for(var col = 0; col < this.gridRows; col++){
 				this.grid[row][col] = new FadeAwayTileC(row, col, this.tileHeight, this.tileWidth);
 				
-				//if it is on the border, make it a wall
+				/*//if it is on the border, make it a wall
 				if(row == 0 || row == this.gridRows -1 || 
 					col == 0 || col == this.gridCols -1){
 					this.grid[row][col].tileState = 'wall';
 				}
 				else
+					this.grid[row][col].tileState = 'open';*/
+
+				//USE WALL DATA TO SET INITIAL WALLS
+
+				if(wallData[currIndex] == 0)
 					this.grid[row][col].tileState = 'open';
+				else if(wallData[currIndex] == 1)
+					this.grid[row][col].tileState = 'wall';
+
+				currIndex ++;
 			}
 		}
 
 		//array of blocks (will be playable in order as each is collected)
 		this.blocks = [
 		{row: 4, col: 1},
-		{row: 6, col: 5},
-		{row: 3, col: 3},
-		{row: 2, col: 8},
-		{row: 4, col: 4},
-		{row: 5, col: 6}
+		//{row: 18, col: 13},
+		{row: 3, col: 10},
+		{row: 16, col: 4},
+		{row: 8, col: 14},
+		{row: 13, col: 7}
 		];
 
 		//turn on first block
 		this.blockIndex = 0;
 		this.grid[this.blocks[this.blockIndex].row][this.blocks[this.blockIndex].col].tileState = 'block';
 
-		//array of blocks (will be playable in order as each is collected)
-		this.initWalls = [
-		{row: 4, col: 1},
-		{row: 4, col: 1},
-		{row: 4, col: 1},
-		{row: 4, col: 1},
-		{row: 4, col: 1},
-		{row: 4, col: 1}
-		];
-
-		//change all initWall Tile's states to 'wall'
-
-
-
-
-		this.playerSpeed = 80;
+		this.playerSpeed = 100;
 		this.playerRadius = (this.tileWidth/2) *.7;
 		this.playerX = canvas.width /2;
 		this.playerY = canvas.height /2;
@@ -107,7 +103,6 @@ class LD47GameC{
 			}
 
 		}
-
 
 	}
 

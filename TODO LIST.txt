@@ -34,21 +34,21 @@ C
 	- blocks: one in every ring? these are open tiles to the player, but will end the level if the ring reaches them. The player clears them by walking through the tile
 
 
-C
-- similar to B, except you are moving through a player maze to find places to leave food for
+D
+- similar to C, except you are moving through a player maze to find places to leave food for
 the loop ring in the maze. If it gets to the middle, you win
 - needs food every loop? (if it gets through a ring without food, it fails)
 
-D
+E
 - the ring moving aroud the edge is not connected to the game, other than a time spanner
 - there is a path and the at start a signal starts to move along it
 - throughout the space (spans beyond the visable screen), there are either BLOCKAGES that must somehow be cleared, or MISSING PATHS that must be completeed before the signal reaches that point in the path.
 - multiple signals being added? needing the same parts (so they have to get moved back and forth in time)?
 - signals travel between "stacks" in 3D space, so you have to move between the layers to make sure the path will be complete/clear
 
-E
+F
 some visualization-like alogorithm loop that is rendered as a shape that is the level
 
-F
+G
 sound loop - somehow the building sound loops increase the levels difficulty (layers of 
 				obsacles/enemies)
