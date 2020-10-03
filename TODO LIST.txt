@@ -1,13 +1,23 @@
 TODO LIST
 
-- implement a game manager class 
-- implement a time step game loop 
+X- implement a game manager class 
+X- implement a time step game loop 
+
 - flesh out game idea and start to build
 
 A
 - just a loopRing test. 9not sure what to do with it from there)
 
 B
+- player moves a set distance randomly X/Y each step
+- no redraw, so the blob is slowly growing from the center
+- not sure what the player would have to do.... just saving the start of the idea....
+	- maybe the player can "sweep away" blob pixels
+	- maybe they can place a limited number of walls that restrict the blob?
+	- maybe the blob expands toward an NPC you are protecting and you need to keep its 
+		path clear?
+
+C
 - make the loop ring a grid of elements
 
 - still starts in TL (or anywhere, I guess) and goes around clockwise
