@@ -1,4 +1,4 @@
-class LoopRing{
+class LoopRingA{
 	constructor(_elementSize, _elementShape = 'square', _ringPadding = 0){
 		this.eSize = _elementSize;
 		//this.eSpacing = _elementSpacing;

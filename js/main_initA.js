@@ -2,7 +2,7 @@ let canvas, context;
 
 let loopRing;
 
-const lrElementSize = 15;
+const lrElementSize = 30;
 
 window.addEventListener('DOMContentLoaded', (e) =>{
 	canvas = document.getElementById('game');
@@ -16,7 +16,7 @@ window.addEventListener('DOMContentLoaded', (e) =>{
 	context.fill();*/
 
 	//(_elementSize, _elementShape, _ringPadding)
-	loopRing = new LoopRing(lrElementSize, 'square');
+	loopRing = new LoopRingA(lrElementSize, 'square');
 
 	setInterval(() =>{
 		loopRing.render();

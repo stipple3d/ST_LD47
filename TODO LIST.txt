@@ -1,0 +1,44 @@
+TODO LIST
+
+- implement a game manager class 
+- implement a time step game loop 
+- flesh out game idea and start to build
+
+A
+- just a loopRing test. 9not sure what to do with it from there)
+
+B
+- make the loop ring a grid of elements
+
+- still starts in TL (or anywhere, I guess) and goes around clockwise
+- still can leave a trail, just for visuals
+- when it gets to the end of the loop it 
+		- plays a sound
+		- increments its offset values
+		- moves in to the next ring and loops again
+- there are different states for the grid tiles
+	- walls: only relevant to tplayer movement, they do not block the ring mover
+				(outer ring is all walls? so the player has time to get their bearings)
+			***some 'trailing' effect on these tiles
+	- open: player can move on these tiles (maze). the ring mover will turn them to wall on touching them
+	- blocks: one in every ring? these are open tiles to the player, but will end the level if the ring reaches them. The player clears them by walking through the tile
+
+
+C
+- similar to B, except you are moving through a player maze to find places to leave food for
+the loop ring in the maze. If it gets to the middle, you win
+- needs food every loop? (if it gets through a ring without food, it fails)
+
+D
+- the ring moving aroud the edge is not connected to the game, other than a time spanner
+- there is a path and the at start a signal starts to move along it
+- throughout the space (spans beyond the visable screen), there are either BLOCKAGES that must somehow be cleared, or MISSING PATHS that must be completeed before the signal reaches that point in the path.
+- multiple signals being added? needing the same parts (so they have to get moved back and forth in time)?
+- signals travel between "stacks" in 3D space, so you have to move between the layers to make sure the path will be complete/clear
+
+E
+some visualization-like alogorithm loop that is rendered as a shape that is the level
+
+F
+sound loop - somehow the building sound loops increase the levels difficulty (layers of 
+				obsacles/enemies)
