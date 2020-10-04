@@ -325,7 +325,7 @@ class LD47GameC{
 
 		//DRAW PLAYER
 		context.beginPath();
-		context.fillStyle = 'green';
+		context.fillStyle = 'white';
 		context.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI *2);
 		context.fill();
 
