@@ -66,7 +66,7 @@ class LD47GameC{
 		this.grid[this.blocks[this.blockIndex].row][this.blocks[this.blockIndex].col].tileState = 'block';
 
 		this.playerSpeed = 100;
-		this.playerRadius = (this.tileWidth/2) *.7;
+		this.playerRadius = (this.tileWidth/2) *.5;
 		this.playerX = canvas.width /2;
 		this.playerY = canvas.height /2;
 
@@ -330,10 +330,10 @@ class LD47GameC{
 		context.fill();
 
 		//write directions on screen
-		context.beginPath();
+		/*context.beginPath();
 		context.fillStyle = 'white';
 		context.font = "30px Arial";
-		context.fillText('L: ' + inputHandler.leftPressed + ', R: ' + inputHandler.rightPressed, 10,26);
+		context.fillText('L: ' + inputHandler.leftPressed + ', R: ' + inputHandler.rightPressed, 10,26);*/
 
 		context.restore();
 	}
