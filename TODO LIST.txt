@@ -49,6 +49,16 @@ E: Loopshoot
 	- rotateable controls (to change the path of the object)
 	- player has to get the object back around and into the loopshoot again each time 
 	- obstacles come and go to make things different and more difficult
+*** TOMORROW
+	- edge/barriers, reset the level
+	- tubes/paths that grab the object and move it through a series of points and then shoot it out the other end in a new trajectory (these are rotatable too?)
+	- the rotating redirects
+	- gravity/repel objects (planets?)
+	- web font
+	- simple starting levels (maybe screen borders are the boundaries?)
+	- when object is in the shoots/objects, transfer the centering to that shoot and then ease it back to the moving object after it is released
+	- bounce pads/edges?
+	
 
 F
 - similar to C, except you are moving through a player maze to find places to leave food for
