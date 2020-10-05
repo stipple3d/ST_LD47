@@ -4,7 +4,7 @@ class LoopShoot{
 		//QUE to get in (if more than one ball reaches the collection point
 		//		in one MOVE tick)
 		//			- Collection is the only place they would bottle up
-		this.qBalls = 1;
+		this.qBalls = 0;
 
 		this.ballRadius = _ballRadius;
 		this.ballSpeed = _ballSpeed;
@@ -63,9 +63,27 @@ class LoopShoot{
 		//counter that will track the internal ticks of the loopShoot
 		this.timeUntilTick = this.tickRate;
 
+		this.ballInRange = false;
+
+		if(this.qBalls == 0){
+			this.ballInShoot = false;
+		}
+		else{
+			this.ballInShoot = true;
+		}
+		
+
+	}
+
+	addBallToQue = function(){
+		this.qBalls ++;
+		this.ballInShoot = true;
 	}
 
 	handleTick = function(_dt){
+
+		this.ballInShoot = false;
+
 
 		//TODO: rom the end of the spaces array, move along/shoot each space toward the end
 
@@ -73,6 +91,10 @@ class LoopShoot{
 
 			if(this.spaces[sp]){
 				//SPACE IS OCCUPIED
+
+				//add time in loop
+				game.timeInLoop();
+
 				if(sp == this.spaces.length -1){
 					//LAST SPACE IS OCCUPIED, SHOOT A BALL FROM THE END
 					this.spaces[sp] = false;
@@ -84,6 +106,7 @@ class LoopShoot{
 				}
 				else{
 					//Any of the other spaces are occupied
+					this.ballInShoot = true;
 
 					//move it to the next space
 					this.spaces[sp] = false;
@@ -102,6 +125,8 @@ class LoopShoot{
 				this.qBalls --;
 				//make first space filled
 				this.spaces[0] = true;
+
+				this.ballInShoot = true;
 			}
 		}
 	}
@@ -120,6 +145,9 @@ class LoopShoot{
 		}
 
 		//ALWAYS DO THE BALL/GRAVITY CHECKS (not tick-based)
+
+		//clear ball in range check each pass
+		this.ballInRange = false;
 
 		//for now, we are reading directly from the 'game' to have access to the balls in play
 		for(var b = 0; b < game.ballsInPlay.length; b++){
@@ -150,6 +178,10 @@ class LoopShoot{
 					}
 				}
 				else{
+
+					this.ballInRange = true;			
+
+
 					//multiply the difVector by gravity rate
 					//(this normailzes and then multiplies)
 					diffVector.setMag(this.gravityRate);
@@ -167,64 +199,70 @@ class LoopShoot{
 
 		context.save();
 
-		//DRAW BG LINE BETWEEN ALL POINTS (THICK AS A TUBE)
-		context.beginPath();
-		context.lineWidth = 25;
-		context.lineCap = "round";
-		context.strokeStyle = '#555';
-		context.moveTo(this.collectPosition.x, this.collectPosition.y);
-		for(var pt = 0; pt < this.points.length; pt++){
-			context.lineTo(this.points[pt].x, this.points[pt].y);
-		}
-		context.stroke();
+		if(this.ballInShoot){
+			//DRAW BG LINE BETWEEN ALL POINTS (THICK AS A TUBE)
+			context.beginPath();
+			context.lineWidth = 25;
+			context.lineCap = "round";
+			context.strokeStyle = '#555';
+			context.moveTo(this.collectPosition.x, this.collectPosition.y);
+			for(var pt = 0; pt < this.points.length; pt++){
+				context.lineTo(this.points[pt].x, this.points[pt].y);
+			}
+			context.stroke();
 
-		//2nD stroke to fill in and make a border
-		context.beginPath();
-		context.lineWidth = 21;
-		context.lineCap = "round";
-		context.strokeStyle = '#333';
-		context.moveTo(this.collectPosition.x, this.collectPosition.y);
-		for(var pt = 0; pt < this.points.length; pt++){
-			context.lineTo(this.points[pt].x, this.points[pt].y);
+			//2nD stroke to fill in and make a border
+			context.beginPath();
+			context.lineWidth = 21;
+			context.lineCap = "round";
+			context.strokeStyle = '#333';
+			context.moveTo(this.collectPosition.x, this.collectPosition.y);
+			for(var pt = 0; pt < this.points.length; pt++){
+				context.lineTo(this.points[pt].x, this.points[pt].y);
+			}
+			context.stroke();
 		}
-		context.stroke();
+
+		
 
 
 
 		//DRAW COLLECTION POINT
-		context.beginPath();
+		/*context.beginPath();
 		context.fillStyle = 'yellow';
 		context.arc(this.collectPosition.x, this.collectPosition.y, 3, 0, Math.PI *2);
-		context.fill();
+		context.fill();*/
 
 
 		//DRAW SPACES (empty or full)
 		for(var sp = 0; sp < this.spaces.length; sp++){
 			context.beginPath();
-			if(this.spaces[sp])
+			if(this.spaces[sp]){
 				context.fillStyle = '#777';
-			else
-				context.fillStyle = '#222';
-			context.arc(this.points[sp].x, this.points[sp].y, this.ballRadius, 0, Math.PI *2);
-			context.fill();
+				context.arc(this.points[sp].x, this.points[sp].y, this.ballRadius, 0, Math.PI *2);
+				context.fill();
+			}				
+			else{
+				/*context.fillStyle = '#222';
+				context.arc(this.points[sp].x, this.points[sp].y, this.ballRadius, 0, Math.PI *2);
+				context.fill();*/
+			}
+			
 		}
 		
 		
 		//DRAW COLLECTION POINT RADIUS LINE (dashed)
-		context.beginPath();
-		context.lineWidth = 1;
-
-		context.fillStyle = 'red';
-
-		context.strokeStyle = '#999';
-		context.setLineDash([10, 10]);
-		context.arc(this.collectPosition.x, this.collectPosition.y, this.collectRadius, 0, Math.PI *2);
-
 		if(this.ballInRange){
+			context.beginPath();
+			context.lineWidth = 1;
+			context.fillStyle = '#444';
+			context.strokeStyle = '#666';
+			context.setLineDash([10, 10]);
+			context.arc(this.collectPosition.x, this.collectPosition.y, this.collectRadius, 0, Math.PI *2);
+			context.stroke();
 			context.fill();
 		}
-
-		context.stroke();
+		
 
 		context.restore();
 	}

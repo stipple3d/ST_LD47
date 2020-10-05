@@ -3,8 +3,9 @@ class InputHandler{
 
 		this.leftPressed = false;
 		this.rightPressed = false;
-		this.upPressed = false;
-		this.downPressed = false;
+		/*this.upPressed = false;
+		this.downPressed = false;*/
+		this.spacePressed = false;
 
 		//currently just arrows
 
@@ -17,25 +18,32 @@ class InputHandler{
 		//		and the released key was an arrow...???)
 
 		document.onkeydown = (e) =>{
-			if(e.key == 'ArrowLeft')
+			console.log(e);
+			if(e.key == 'ArrowLeft' || e.key == 'a')
 				this.leftPressed = true;
-			else if(e.key == 'ArrowRight')
+			else if(e.key == 'ArrowRight' || e.key == 'd')
 				this.rightPressed = true;
-			else if(e.key == 'ArrowUp')
+			/*else if(e.key == 'ArrowUp' || e.key == 'w')
 				this.upPressed = true;
-			else if(e.key == 'ArrowDown')
-				this.downPressed = true;
+			else if(e.key == 'ArrowDown' || e.key == 's')
+				this.downPressed = true;*/
+			else if(e.code == 'Space')
+				this.spacePressed = true;
 		};
 
 		document.onkeyup = (e) =>{
-			if(e.key == 'ArrowLeft')
+			if(e.key == 'ArrowLeft' || e.key == 'a')
 				this.leftPressed = false;
-			else if(e.key == 'ArrowRight')
+			else if(e.key == 'ArrowRight' || e.key == 'd')
 				this.rightPressed = false;
-			else if(e.key == 'ArrowUp')
+			/*else if(e.key == 'ArrowUp' || e.key == 'w')
 				this.upPressed = false;
-			else if(e.key == 'ArrowDown')
-				this.downPressed = false;
+			else if(e.key == 'ArrowDown' || e.key == 's')
+				this.downPressed = false;*/
+			else if(e.code == 'Space')
+				this.spacePressed = false;
 		};
+
+
 	}
 }

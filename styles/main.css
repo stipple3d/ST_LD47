@@ -1,7 +1,9 @@
 body{
-
+	background-color: #333;
+	
 }
 #game{
 	/*main canvas element*/
 	background-color: #333;
+	border: 1px solid #888;
 }

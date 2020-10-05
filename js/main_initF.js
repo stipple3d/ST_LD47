@@ -14,7 +14,8 @@ const levels = [
 
 {
 title: 'LOOP LOOP TEST', 
-ballSpeed: 100, //pixels per second
+ballSpeed: 200, //pixels per second
+ballsToStart: 1,
 loopshoots: [
 
 	{cpX: 45, cpY: 160, cpRadius: 75, 

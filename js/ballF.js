@@ -18,12 +18,24 @@ class Ball{
 		//bounce of the top?
 		if(this.pos.y - this.radius <= 0)
 			this.vel.y *= -1;
-		else if(this.pos.y > canvas.height){
+		/*else if(this.pos.y > canvas.height){
 
 			//BALL HAS GONE OFF THE BOTTOM OF THE SCREEN = LOST LIFE
+			//game.removeBall(this);
+		}*/
+		else if(this.vel.y > 0 &&
+				this.pos.x >= game.paddlePos.x - game.paddleWidth /2 && 
+				this.pos.x <= game.paddlePos.x + game.paddleWidth /2 &&
+				this.pos.y + this.radius >= game.paddlePos.y){
+			//collided with paddle, reverse Y vel
 
-			//for now, bounce off the bottom too...
+			//this.pos.y = game.paddlePos.y - game.paddleHeight/2 - this.height/2;
 			this.vel.y *= -1;
+
+			//and add a adjustment if the paddle was moving this frame
+			if(game.paddleChangeX != 0){
+				this.addForce(game.paddleChangeX * 10, 0);
+			}
 		}
 	}
 
