@@ -217,21 +217,27 @@ class LD47Game{
 			context.beginPath();
 			context.textAlign = "center";
 
-			// context.font = "80px Luckiest Guy";
-			// context.fillStyle = '#8ac80b';
-			// context.fillText('GAME OVER', canvas.width /2, 270);
 
 			context.fillStyle = '#8ac80b';
 
 			context.font = "80px Luckiest Guy";
-			context.fillText('LoopShoots', canvas.width /2, 270);
+			context.fillText('LoopShoots', canvas.width /2, 170);
 
 			context.fillStyle = 'white';
 			context.font = "32px Arial";
-			context.fillText('by Stipple3D', canvas.width /2 + 120, 310);
+			context.fillText('by Stipple3D', canvas.width /2 + 120, 210);
 
-			context.font = "20px Arial";
-			context.fillText('< SPACE BAR >    TO START', canvas.width /2, canvas.width - 50);
+			
+
+			context.font = "18px Arial";
+			context.fillText('1) MOVE LEFT / RIGHT  (ARROWS, WASD)', canvas.width /2, 340);
+			context.fillText('2) KEEP AS MANY BALLS UP AS YOU CAN', canvas.width /2, 390);
+			context.fillText('3) POINTS AND EXTRA BALLS FOR TIME SPENT', canvas.width /2, 440);
+			context.fillText('IN THE  "LOOPSHOOTS"', canvas.width /2, 465);
+
+			context.fillStyle = '#8ac80b';
+			context.font = "24px Arial";
+			context.fillText('< SPACE BAR >    TO START', canvas.width /2, 580);
 		}
 		else{
 
