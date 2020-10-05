@@ -1,13 +1,14 @@
 class LoopShoot{
-	constructor(_level, _lsIndex, _ballRadius){
+	constructor(_level, _lsIndex, _ballRadius, _ballSpeed){
 
-		//TODO: QUE to get in (if more than one ball reaches the collection point
+		//QUE to get in (if more than one ball reaches the collection point
 		//		in one MOVE tick)
 		//			- Collection is the only place they would bottle up
-
-		//TODO: gravity of the collection point works in frame time
+		this.qBalls = 1;
+		
 
 		this.ballRadius = _ballRadius;
+		this.ballSpeed = _ballSpeed;
 
 		//position of center of the loopshoot
 		this.collectPosition = new Vector2D(levels[_level].loopshoots[_lsIndex].cpX, 
@@ -15,8 +16,18 @@ class LoopShoot{
 
 		this.collectRadius = levels[_level].loopshoots[_lsIndex].cpRadius;
 
+		this.grabRadius = this.ballRadius *2;
+
+		//gravity of the collection point works in frame time
+		//(starting testing for collection gravity at the collection radius per/second?)
+		this.gravityRate = this.collectRadius / 4;//pixels per second to add to the balls in loopShoot's radius
+
 		//incoming angle is in degrees, adjust to Radians for use here
 		this.releaseAngle = levels[_level].loopshoots[_lsIndex].releaseAngle * (Math.PI/180);
+
+
+		//calculate the release X/Y (normalized) (will be adjusted by game)
+		this.releaseVelocity = new Vector2D(this.ballSpeed * Math.cos(this.releaseAngle), this.ballSpeed * Math.sin(this.releaseAngle));
 
 		//array of Vector2D points
 		this.points = [];
@@ -34,68 +45,52 @@ class LoopShoot{
 		}
 
 		//using DeltaTime to set the tick rate, so it is framerate independent
-		this.tickRate = 1;//seconds
+		this.tickRate = .1;//seconds
 
 		//counter that will track the internal ticks of the loopShoot
 		this.timeUntilTick = this.tickRate;
-		
-		
-
-		/*//current angle of the shoot (shoot angle is the definition)
-		this.angle = _angleInDeg * (Math.PI/180);
-		//console.log('angle(deg): ' + _angleInDeg + ', angle(rad): ' + this.angle);
-
-		//total levngth of the shoot 
-		//(shootPoint to endPoint, center is midpoint between these)
-		this.length = 100;
-
-		this.shootPointRel = new Vector2D((this.length/2) * Math.cos(this.angle), (this.length/2) * Math.sin(this.angle));
-		this.endPointRel = new Vector2D((this.length/2) * Math.cos(this.angle + Math.PI), (this.length/2) * Math.sin(this.angle + Math.PI));
-		
-		this.shootSpeed = 5;
-
-		this.rotateSpeed = 10 * (Math.PI/180);
-
-		this.normShootVector = new Vector2D(this.shootPointRel.x, this.shootPointRel.y);
-		this.normShootVector.normalize();*/
-
-		/*
-
-// angle in radians
-var angleRadians = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-
-// angle in degrees
-var angleDeg = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
-
-angle in radian = angle in degree * Pi / 180
-
-destX = currX + (distance * cos(radianAngle))
-destY = currY + (distance * sin(radianAngle))
-
-*/	
-		/*//time between when the object gets to the shootPoint and when it is shot
-		//(might add a phase where loopShoot moves and rotates before countdown starts?)
-		this.shootWait = 180;
-
-		this.hasObject = true;
-
-		//can be 'center' or 'shoot' 
-		//(or maybe 'end' if we are having the end attract the object when it is close enough)
-		this.movingToward = 'shoot';
-
-		this.drawRelativeToViewport = true;
-
-		this.objDistToCenter = 0;*/
-
-
 
 	}
 
 	handleTick = function(_dt){
 
-		
+		//TODO: rom the end of the spaces array, move along/shoot each space toward the end
 
+		for(var sp = this.spaces.length -1; sp >= 0; sp--){
 
+			if(this.spaces[sp]){
+				//SPACE IS OCCUPIED
+				if(sp == this.spaces.length -1){
+					//LAST SPACE IS OCCUPIED, SHOOT A BALL FROM THE END
+					this.spaces[sp] = false;
+
+					//tell game to release a ball with a position and velocity based on the end point
+					//		and the 'release' angle for this loopShoot
+					game.releaseBall(this.points[sp], this.releaseVelocity);
+					console.log('releasing ball from loopShoot');
+				}
+				else{
+					//Any of the other spaces are occupied
+
+					//move it to the next space
+					this.spaces[sp] = false;
+					this.spaces[sp +1] = true;
+				}
+			}
+		}
+
+		//if the first space is free and we have a ball in the que, put the ball in a space
+		if(!this.spaces[0]){
+			//first space is empty
+			if(this.qBalls > 0){
+				//there is at least one ball in the QUE
+
+				//remove a count from the QUE
+				this.qBalls --;
+				//make first space filled
+				this.spaces[0] = true;
+			}
+		}
 	}
 
 	update = function(_dt){
@@ -109,6 +104,48 @@ destY = currY + (distance * sin(radianAngle))
 			this.timeUntilTick += this.tickRate;
 			//run a tick
 			this.handleTick(_dt);
+		}
+
+		//ALWAYS DO THE BALL/GRAVITY CHECKS (not tick-based)
+
+		//for now, we are reading directly from the 'game' to have access to the balls in play
+		for(var b = 0; b < game.ballsInPlay.length; b++){
+
+			var diffVector = new Vector2D(this.collectPosition.x - game.ballsInPlay[b].pos.x,
+										this.collectPosition.y - game.ballsInPlay[b].pos.y);
+			
+			var ballDist = Math.sqrt( (diffVector.x * diffVector.x) + (diffVector.y * diffVector.y) );
+
+			//check if the ball is already close enough to the collection point to grab it
+			if(ballDist <= this.collectRadius){
+				
+				if(ballDist <= this.grabRadius){
+					//loopShoot is grabbing the ball
+
+					//reset tick timer (so we wait a full tick before it starts moving through points)
+					this.timeUntilTick = this.tickRate
+
+					//remove the ball from the in play array
+					game.ballsInPlay.splice(b, 1);
+
+					//either put it in the QUE or the first 'space' in loopShoot
+					if(!this.spaces[0]){
+						this.spaces[0] = true;
+					}
+					else{
+						qBalls ++;
+					}
+				}
+				else{
+					//multiply the difVector by gravity rate
+					//(this normailzes and then multiplies)
+					diffVector.setMag(this.gravityRate);
+
+					//apply that gravity to the ball
+					game.ballsInPlay[b].addForce(diffVector.x, diffVector.y);
+					//console.log('diffVector: ' + diffVector.x + ', ' + diffVector.y);
+				}
+			}
 		}
 
 	}
@@ -137,63 +174,33 @@ destY = currY + (distance * sin(radianAngle))
 		context.fill();
 
 
-
-		
-
-
-
-		/*var usePosX = this.pos.x;
-		var usePosY = this.pos.y;
-		//console.log('usePos: ' + usePosX + ', ' + usePosY);
-		//console.log('offsets: ' + _offsetX + ', ' + _offsetY);
-
-		if(this.drawRelativeToViewport){
-			//the 300 here is the initial 'viewport' position
-			usePosX += -_offsetX;
-			usePosY += -_offsetY;
+		//DRAW SPACES (empty or full)
+		for(var sp = 0; sp < this.spaces.length; sp++){
+			context.beginPath();
+			if(this.spaces[sp])
+				context.fillStyle = '#777';
+			else
+				context.fillStyle = '#333';
+			context.arc(this.points[sp].x, this.points[sp].y, this.ballRadius, 0, Math.PI *2);
+			context.fill();
 		}
-
-		//DRAW SHOOT BG LINE
-		context.beginPath();
-		context.strokeStyle = '#777';
-		context.lineCap = "round";
-		context.lineWidth = this.length * .33333;
-		context.moveTo(usePosX + this.endPointRel.x, usePosY + this.endPointRel.y);
-		context.lineTo(usePosX + this.shootPointRel.x, usePosY + this.shootPointRel.y);
-		context.stroke();
-
 		
-
-		//DRAW SHOOT POINT
-		context.beginPath();
-		context.fillStyle = 'red';
-		context.arc(usePosX + this.shootPointRel.x, usePosY + this.shootPointRel.y, 6, 0, Math.PI *2);
-		context.fill();
-
-		//DRAW END POINT
-		context.beginPath();
-		context.fillStyle = 'blue';
-		context.arc(usePosX + this.endPointRel.x, usePosY + this.endPointRel.y, 6, 0, Math.PI *2);
-		context.fill();
-
-		//DRAW A NORMALIZED (& amultiplied by the shootSpeed) VECTOR STARTING AT SHOOT POINT
+		
+		//DRAW COLLECTION POINT RADIUS LINE (dashed)
 		context.beginPath();
 		context.lineWidth = 1;
-		context.lineCap = "butt";
-		context.strokeStyle = 'white';
-		context.moveTo(usePosX + this.shootPointRel.x, usePosY + this.shootPointRel.y);
-		
-		context.lineTo(usePosX + this.shootPointRel.x + (this.normShootVector.x * this.shootSpeed), usePosY + this.shootPointRel.y + (this.normShootVector.y * this.shootSpeed));
-		context.stroke();
 
-		if(this.movingToward == 'waitingToShoot'){
-			context.beginPath();
-			context.fillStyle = 'black';
-			context.font = "60px Arial";
-			context.fillText(Math.round(this.shootWait /12) + '...', game.objectPos.x - 16, game.objectPos.y -20);
+		context.fillStyle = 'red';
+
+		context.strokeStyle = '#999';
+		context.setLineDash([10, 10]);
+		context.arc(this.collectPosition.x, this.collectPosition.y, this.collectRadius, 0, Math.PI *2);
+
+		if(this.ballInRange){
+			context.fill();
 		}
-		*/
-	
+
+		context.stroke();
 
 		context.restore();
 	}

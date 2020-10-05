@@ -4,10 +4,10 @@ class Vector2D{
 		this.y = _y;
 	}
 	divide = function(_v2){
-		return new Vector2(this.x / _v2.x, this.y / _v2.y);
+		return new Vector2D(this.x / _v2.x, this.y / _v2.y);
 	}
 	multiply = function(_v2){
-		return new Vector2(this.x * _v2.x, this.y * _v2.y);
+		return new Vector2D(this.x * _v2.x, this.y * _v2.y);
 	}
 	getMag = function(){
 		return Math.sqrt( (this.x * this.x) + (this.y * this.y) );

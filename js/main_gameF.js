@@ -7,28 +7,9 @@ class LD47Game{
 
 		this.levelIndex = _level;
 
-
-
-	//***** LOOPSHOOTS
-
-		//loopShoot(s) array
-		this.loopShoots = [];
-
-		//populate the array from the data
-		for(var s = 0; s < levels[this.levelIndex].loopshoots.length; s++){
-			//just pass in the level and the LoopShoot's index 
-			//and it will pull the rest from data
-			this.loopShoots[s] = new LoopShoot(this.levelIndex, s, this.ballRadius);
-		}
-
-		//TODO: loopshoot 'collision' zones
-		
-
-
-
 	//***** BALLS
 
-		this.ballRadius = 20;
+		this.ballRadius = 10;
 
 		//SINGLE BALL SPEED? (for the level)
 		//(pixels per second)
@@ -42,31 +23,38 @@ class LD47Game{
 		//TODO: way to add a ball?
 
 		//TEST: add a ball headed toward one of the collection points
-		var ball = new Ball();
+		//var ball = new Ball(120, 300, this.ballSpeed, this.ballRadius);
+		//ball.setVelocity(0,-this.ballSpeed);
+		//this.ballsInPlay.push(ball);
 
-		
+
+	//***** LOOPSHOOTS
+
+		//loopShoot(s) array
+		this.loopShoots = [];
+
+		//populate the array from the data
+		for(var s = 0; s < levels[this.levelIndex].loopshoots.length; s++){
+			//just pass in the level and the LoopShoot's index 
+			//and it will pull the rest from data
+			this.loopShoots[s] = new LoopShoot(this.levelIndex, s, this.ballRadius, this.ballSpeed);
+		}
+
+		//TODO: loopshoot 'collision' zones
 
 	//***** PHYSICS
 
 		//TODO: side wall bounces
 
 		//TODO: bottom edge death
+	}
 
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	releaseBall = function(_posVec, _velVec){
+		console.log('releasing ball at: ' + _posVec.x + ', ' + _posVec.y);
+		console.log('new ball vel: ' + _velVec.x + ', ' + _velVec.y);
+		var ball = new Ball(_posVec.x, _posVec.y, this.ballSpeed, this.ballRadius);
+		ball.setVelocity(_velVec.x, _velVec.y);
+		this.ballsInPlay.push(ball);
 	}
 
 
@@ -75,19 +63,19 @@ class LD47Game{
 
 
 
-		//TODO: UPDATE FREE MOVING BALLS
-		//		(ball position will determine if the loopShoots can 'collect the balls')
+		
 
 
 		//UPDATE LOOPSHOOTS
+		//TODO: check if a ball moved into a collection point and collect it/them if they do
 		for(var s = 0; s < this.loopShoots.length; s++){
 			this.loopShoots[s].update(_dt);
 		}
 
-
-
-
-
+		//UPDATE FREE MOVING BALLS
+		for(var b = 0; b < this.ballsInPlay.length; b++){
+			this.ballsInPlay[b].update(_dt);
+		}
 
 
 		/*//move object (with keys for now)
@@ -140,21 +128,16 @@ class LD47Game{
 		//render player at current position each render
 		context.save();
 
-
-
-
-
 		//RENDER LOOPSHOOTS
 		for(var s = 0; s < this.loopShoots.length; s++){
 			this.loopShoots[s].draw();
 		}
 
 
-
-
-
-
-
+		//RENDER BALLS
+		for(var b = 0; b < this.ballsInPlay.length; b++){
+			this.ballsInPlay[b].draw();
+		}
 
 
 		//check all objects in the drawableObjects array and if they are in the viewport area

@@ -14,10 +14,10 @@ const levels = [
 
 {
 title: 'LOOP LOOP TEST', 
-ballSpeed: 5, 
+ballSpeed: 100, //pixels per second
 loopshoots: [
 
-	{cpX: 150, cpY: 100, cpRadius: 50, 
+	{cpX: 150, cpY: 100, cpRadius: 75, 
 	movePoints: [
 		{cX: 150, cY: 75},
 		{cX: 150, cY: 50},
@@ -38,9 +38,9 @@ loopshoots: [
 		{cX: 450, cY: 75},
 		{cX: 450, cY: 100}
 	],
-	releaseAngle: 270},
+	releaseAngle: 90},
 
-	{cpX: 450, cpY: 500, cpRadius: 50, 
+	{cpX: 450, cpY: 500, cpRadius: 75, 
 	movePoints: [
 		{cX: 450, cY: 525},
 		{cX: 450, cY: 575},
@@ -48,7 +48,7 @@ loopshoots: [
 		{cX: 150, cY: 525},
 		{cX: 150, cY: 500}
 	],
-	releaseAngle: 90}
+	releaseAngle: 270}
 ]
 }
 
