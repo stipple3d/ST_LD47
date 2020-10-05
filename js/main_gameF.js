@@ -37,10 +37,10 @@ class LD47Game{
 		}
 
 		//add number of balls requested to random loopShoot QUEs
-		for(var b = 0; b < levels[this.levelIndex].ballsToStart; b++){
+		/*for(var b = 0; b < levels[this.levelIndex].ballsToStart; b++){
 			this.loopShoots[Math.floor(Math.random() * this.loopShoots.length)].addBallToQue();
 			this.ballCount ++;
-		}
+		}*/
 
 	//***** PHYSICS
 
@@ -93,7 +93,7 @@ class LD47Game{
 	//NOTE: _dt is coming from gameLoop
 	update = (_dt) =>{
 
-		if(this.gameOver)
+		if(this.gameOver || this.intro)
 			return;
 
 		//if we are suposed to be adding a ball do it
@@ -164,29 +164,24 @@ class LD47Game{
 		//render player at current position each render
 		context.save();
 
-		//DRAW PADDLE
-		context.beginPath();
-		context.fillStyle = '#8ac80b';
-		context.strokeStyle = '#white';
-		context.rect(this.paddlePos.x - this.paddleWidth /2, this.paddlePos.y, this.paddleWidth, this.paddleHeight);
-		context.fill();
-		context.stroke();
-
-
-		//RENDER LOOPSHOOTS
-		for(var s = 0; s < this.loopShoots.length; s++){
-			this.loopShoots[s].draw();
-		}
-
-		//RENDER BALLS
-		for(var b = 0; b < this.ballsInPlay.length; b++){
-			this.ballsInPlay[b].draw();
-		}
-
 		if(this.gameOver){
 
 			if(inputHandler.spacePressed){
-				location.reload();
+				//location.reload();
+
+				//clear score
+				this.ballCount = 0;
+				this.timeSpentInLoop = 0;
+				this.score = 0;
+				this.addBallNextUpdate = false;
+				this.nextFreeBall = 12;
+				this.gameOver = false;
+
+				for(var b = 0; b < levels[this.levelIndex].ballsToStart; b++){
+					this.loopShoots[Math.floor(Math.random() * this.loopShoots.length)].addBallToQue();
+					this.ballCount ++;
+				}
+
 			}
 
 			context.beginPath();
@@ -205,8 +200,52 @@ class LD47Game{
 			context.font = "20px Arial";
 			context.fillText('< SPACE BAR >    TO PLAY AGAIN', canvas.width /2, canvas.width - 50);
 			context.fillText('by Stipple3D', canvas.width /2 + 80, 125);
+			
+		}
+		else if(this.intro){
+			if(inputHandler.spacePressed){
+
+				//add number of balls requested to random loopShoot QUEs
+				for(var b = 0; b < levels[this.levelIndex].ballsToStart; b++){
+					this.loopShoots[Math.floor(Math.random() * this.loopShoots.length)].addBallToQue();
+					this.ballCount ++;
+				}
+
+				this.intro = false;
+			}
+
+			context.beginPath();
+			context.textAlign = "center";
+
+			// context.font = "80px Luckiest Guy";
+			// context.fillStyle = '#8ac80b';
+			// context.fillText('GAME OVER', canvas.width /2, 270);
+
+			context.fillStyle = '#8ac80b';
+
+			context.font = "80px Luckiest Guy";
+			context.fillText('LoopShoots', canvas.width /2, 270);
+
+			context.fillStyle = 'white';
+			context.font = "32px Arial";
+			context.fillText('by Stipple3D', canvas.width /2 + 120, 310);
+
+			context.font = "20px Arial";
+			context.fillText('< SPACE BAR >    TO START', canvas.width /2, canvas.width - 50);
 		}
 		else{
+
+			//RENDER LOOPSHOOTS
+			for(var s = 0; s < this.loopShoots.length; s++){
+				this.loopShoots[s].draw();
+			}
+
+			//RENDER BALLS
+			for(var b = 0; b < this.ballsInPlay.length; b++){
+				this.ballsInPlay[b].draw();
+			}
+
+
 			//write directions on screen
 			context.beginPath();
 
@@ -218,13 +257,22 @@ class LD47Game{
 			context.fillText('NEXT BALL:  ' + (this.nextFreeBall - this.timeSpentInLoop), canvas.width /2 - 10, 30);
 			context.textAlign = "left";
 			context.font = "14px Arial";
-			context.fillText('by Stipple3D', canvas.width - 100, 50);
+			context.fillText('by Stipple3D', canvas.width - 103, 47);
 
 			context.font = "28px Luckiest Guy";
 			context.fillText('LoopShoots', canvas.width - 180, 30);
 
 			context.fillStyle = '#8ac80b';
-			context.fillText('x  ' + this.ballCount, 20, 60);
+			context.fillText('x  ' + this.ballCount, 30, 60);
+
+			//DRAW PADDLE
+			context.beginPath();
+			context.fillStyle = '#8ac80b';
+			context.strokeStyle = '#white';
+			context.rect(this.paddlePos.x - this.paddleWidth /2, this.paddlePos.y, this.paddleWidth, this.paddleHeight);
+			context.fill();
+			context.stroke();
+			
 		}
 
 		context.restore();
