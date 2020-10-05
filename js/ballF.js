@@ -10,6 +10,21 @@ class Ball{
 	update = function(_dt){
 		this.pos.x += this.vel.x * _dt;
 		this.pos.y += this.vel.y * _dt;
+
+		//console.log(this.radius);
+		//bounce off the sides
+		if(this.pos.x - this.radius <= 0 || this.pos.x + this.radius >= canvas.width)
+			this.vel.x *= -1;
+		//bounce of the top?
+		if(this.pos.y - this.radius <= 0)
+			this.vel.y *= -1;
+		else if(this.pos.y > canvas.height){
+
+			//BALL HAS GONE OFF THE BOTTOM OF THE SCREEN = LOST LIFE
+
+			//for now, bounce off the bottom too...
+			this.vel.y *= -1;
+		}
 	}
 
 	addForce = function(_x, _y){
@@ -17,7 +32,7 @@ class Ball{
 		this.vel.x += _x;
 		this.vel.y += _y;
 
-		//TODO: contrain this and check magnitude to be EQUAL to the target speed
+		//contrain this and check magnitude to be EQUAL to the target speed
 		this.vel.setMag(this.speed);
 	}
 

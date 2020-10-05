@@ -5,7 +5,6 @@ class LoopShoot{
 		//		in one MOVE tick)
 		//			- Collection is the only place they would bottle up
 		this.qBalls = 1;
-		
 
 		this.ballRadius = _ballRadius;
 		this.ballSpeed = _ballSpeed;
@@ -22,13 +21,6 @@ class LoopShoot{
 		//(starting testing for collection gravity at the collection radius per/second?)
 		this.gravityRate = this.collectRadius / 4;//pixels per second to add to the balls in loopShoot's radius
 
-		//incoming angle is in degrees, adjust to Radians for use here
-		this.releaseAngle = levels[_level].loopshoots[_lsIndex].releaseAngle * (Math.PI/180);
-
-
-		//calculate the release X/Y (normalized) (will be adjusted by game)
-		this.releaseVelocity = new Vector2D(this.ballSpeed * Math.cos(this.releaseAngle), this.ballSpeed * Math.sin(this.releaseAngle));
-
 		//array of Vector2D points
 		this.points = [];
 
@@ -43,6 +35,27 @@ class LoopShoot{
 			//add an false value (empty space) to the spaces array
 			this.spaces[pt] = false;
 		}
+
+		//incoming angle is in degrees, adjust to Radians for use here
+		//this.releaseAngle = levels[_level].loopshoots[_lsIndex].releaseAngle * (Math.PI/180);
+
+		//TODO: calculate the release ange from the last two points!!!s
+		// angle in radians
+
+		/*this.points[this.points.length -1].x
+		this.points[this.points.length -1].y
+
+		this.points[this.points.length -2].x
+		this.points[this.points.length -2].y*/
+		
+		//this.releaseAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+		this.releaseAngle = Math.atan2(this.points[this.points.length -1].y - this.points[this.points.length -2].y, 
+										this.points[this.points.length -1].x - this.points[this.points.length -2].x);
+
+
+		//calculate the release X/Y (normalized) (will be adjusted by game)
+		this.releaseVelocity = new Vector2D(this.ballSpeed * Math.cos(this.releaseAngle), this.ballSpeed * Math.sin(this.releaseAngle));
+
 
 		//using DeltaTime to set the tick rate, so it is framerate independent
 		this.tickRate = .1;//seconds
@@ -133,7 +146,7 @@ class LoopShoot{
 						this.spaces[0] = true;
 					}
 					else{
-						qBalls ++;
+						this.qBalls ++;
 					}
 				}
 				else{
@@ -165,6 +178,17 @@ class LoopShoot{
 		}
 		context.stroke();
 
+		//2nD stroke to fill in and make a border
+		context.beginPath();
+		context.lineWidth = 21;
+		context.lineCap = "round";
+		context.strokeStyle = '#333';
+		context.moveTo(this.collectPosition.x, this.collectPosition.y);
+		for(var pt = 0; pt < this.points.length; pt++){
+			context.lineTo(this.points[pt].x, this.points[pt].y);
+		}
+		context.stroke();
+
 
 
 		//DRAW COLLECTION POINT
@@ -180,7 +204,7 @@ class LoopShoot{
 			if(this.spaces[sp])
 				context.fillStyle = '#777';
 			else
-				context.fillStyle = '#333';
+				context.fillStyle = '#222';
 			context.arc(this.points[sp].x, this.points[sp].y, this.ballRadius, 0, Math.PI *2);
 			context.fill();
 		}
