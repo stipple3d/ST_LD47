@@ -1,0 +1,14 @@
+body{
+	background-color: #333;
+	text-align: center;
+}
+#game{
+	/*main canvas element*/
+	margin-top: 10px;
+	background-color: #333;
+	border: 1px solid #888;
+}
+p{
+	font-family: sans-serif;
+	color: white;
+}
