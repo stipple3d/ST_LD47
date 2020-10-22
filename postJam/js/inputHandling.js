@@ -1,13 +1,14 @@
 class InputHandler{
 	constructor(){
-
 		this.leftPressed = false;
 		this.rightPressed = false;
-		/*this.upPressed = false;
-		this.downPressed = false;*/
 		this.spacePressed = false;
 
-		//currently just arrows
+		//currently respods to WASD and arrow keys, but will flag a direction false 
+		//when EITHER key reprenting that direction is RELEASED
+		//(could either keep track of last pressed or track each key and then have a 
+		//	method to get 'leftPressed' and 'rightPressed' that checks if either key is pressed in 
+		//	that direction)
 
 		//if I use WASD (and others) in addition, will this assume that only one is 
 		//used? (so, if upArrow is pressed and then W is pressed and then upArrow is 
@@ -23,10 +24,6 @@ class InputHandler{
 				this.leftPressed = true;
 			else if(e.key == 'ArrowRight' || e.key == 'd')
 				this.rightPressed = true;
-			/*else if(e.key == 'ArrowUp' || e.key == 'w')
-				this.upPressed = true;
-			else if(e.key == 'ArrowDown' || e.key == 's')
-				this.downPressed = true;*/
 			else if(e.code == 'Space')
 				this.spacePressed = true;
 		};
@@ -36,14 +33,9 @@ class InputHandler{
 				this.leftPressed = false;
 			else if(e.key == 'ArrowRight' || e.key == 'd')
 				this.rightPressed = false;
-			/*else if(e.key == 'ArrowUp' || e.key == 'w')
-				this.upPressed = false;
-			else if(e.key == 'ArrowDown' || e.key == 's')
-				this.downPressed = false;*/
 			else if(e.code == 'Space')
 				this.spacePressed = false;
 		};
-
 
 	}
 }
