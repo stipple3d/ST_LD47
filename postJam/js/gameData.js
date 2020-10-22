@@ -8,6 +8,8 @@ ballSpeed: 200, //pixels per second
 ballsToStart: 1,
 levelWidth: 600,
 levelHeight: 660,
+topPadding: 0,
+bottomPadding: 0,
 loopshoots: [
 
 	{cpX: 45, cpY: 160, cpRadius: 75, 
@@ -81,6 +83,14 @@ loopshoots: [
 	],
 	releaseAngle: 230}
 ]
-}
+},
+
+
+
+
+
 
 ];
+
+
+
