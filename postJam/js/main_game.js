@@ -7,6 +7,8 @@ class Game{
 
 	//***** BALLS
 
+		//TODO: pull this in from the level data
+		//		(and make sure everything draws accordingly)
 		this.ballRadius = 10;
 
 		//SINGLE BALL SPEED? (for the level)
