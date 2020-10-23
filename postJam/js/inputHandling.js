@@ -19,7 +19,6 @@ class InputHandler{
 		//		and the released key was an arrow...???)
 
 		document.onkeydown = (e) =>{
-			console.log(e);
 			if(e.key == 'ArrowLeft' || e.key == 'a')
 				this.leftPressed = true;
 			else if(e.key == 'ArrowRight' || e.key == 'd')

@@ -94,6 +94,7 @@ class LoopShoot{
 
 				//add time in loop
 				game.timeInLoop();
+				// loopTickA.play();
 
 				if(sp == this.spaces.length -1){
 					//LAST SPACE IS OCCUPIED, SHOOT A BALL FROM THE END

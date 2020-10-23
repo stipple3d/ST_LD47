@@ -13,11 +13,15 @@ class Ball{
 
 		//console.log(this.radius);
 		//bounce off the sides
-		if(this.pos.x - this.radius <= 0 || this.pos.x + this.radius >= canvas.width)
+		if(this.pos.x - this.radius <= 0 || this.pos.x + this.radius >= canvas.width){
 			this.vel.x *= -1;
+			wallBounceA.play();
+		}
 		//bounce of the top?
-		if(this.pos.y - this.radius <= 0)
+		if(this.pos.y - this.radius <= 0){
 			this.vel.y *= -1;
+			wallBounceA.play();
+		}
 		/*else if(this.pos.y > canvas.height){
 
 			//BALL HAS GONE OFF THE BOTTOM OF THE SCREEN = LOST LIFE
@@ -28,7 +32,7 @@ class Ball{
 				this.pos.x <= game.paddlePos.x + game.paddleWidth /2 &&
 				this.pos.y + this.radius >= game.paddlePos.y){
 			//collided with paddle, reverse Y vel
-
+			bounceSoundA.play();
 			//this.pos.y = game.paddlePos.y - game.paddleHeight/2 - this.height/2;
 			this.vel.y *= -1;
 

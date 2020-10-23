@@ -90,6 +90,7 @@ class Game{
 		var ball = new Ball(_posVec.x, _posVec.y, this.ballSpeed, this.ballRadius);
 		ball.setVelocity(_velVec.x, _velVec.y);
 		this.ballsInPlay.push(ball);
+		releaseSoundA.play();
 	}
 
 	//NOTE: _dt is coming from gameLoop
@@ -148,6 +149,7 @@ class Game{
 			if(this.ballsInPlay[b].pos.y > canvas.height){
 				this.ballsInPlay.splice(b, 1);
 				this.ballCount --;
+				deathSoundA.play();
 			}
 		}
 
