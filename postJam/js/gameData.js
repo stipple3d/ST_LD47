@@ -12,7 +12,33 @@ topPadding: 0,
 bottomPadding: 0,
 loopshoots: [
 
-	{cpX: 45, cpY: 160, cpRadius: 75, 
+	{cpX: 57, cpY: 176, cpRadius: 75, 
+	movePoints: [
+	{cX: 53, cY: 159},
+	{cX: 53, cY: 134},
+	{cX: 58, cY: 110},
+	{cX: 65, cY: 86},
+	{cX: 77, cY: 65},
+	{cX: 90, cY: 45},
+	{cX: 110, cY: 27},
+	{cX: 136, cY: 16},
+	{cX: 167, cY: 11},
+	{cX: 196, cY: 12},
+	{cX: 226, cY: 18},
+	{cX: 247, cY: 34},
+	{cX: 262, cY: 57},
+	{cX: 270, cY: 81},
+	{cX: 283, cY: 106},
+	{cX: 303, cY: 129},
+	{cX: 322, cY: 152},
+	{cX: 344, cY: 172},
+	{cX: 360, cY: 194},
+	{cX: 365, cY: 219},
+	{cX: 371, cY: 246},
+	{cX: 384, cY: 273},
+	{cX: 400, cY: 300},], releaseAngle: 80},
+
+	/*{cpX: 45, cpY: 160, cpRadius: 75, 
 	movePoints: [
 		{cX: 50, cY: 145},
 		{cX: 92, cY: 25},
@@ -22,7 +48,7 @@ loopshoots: [
 		{cX: 352, cY: 190},
 		{cX: 367, cY: 245}
 	],
-	releaseAngle: 80},
+	releaseAngle: 80},*/
 
 	{cpX: 180, cpY: 90, cpRadius: 75, 
 	movePoints: [
@@ -84,7 +110,6 @@ loopshoots: [
 	releaseAngle: 230}
 ]
 },
-
 
 
 

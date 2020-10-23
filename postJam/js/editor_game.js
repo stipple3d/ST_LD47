@@ -62,18 +62,27 @@ class Game{
 
 	}
 
-	setupLevel = function(){
+	setupLevel = function(_new = false){
 
 		this.loopShoots = [];
 
-		//populate the array from the data
-		for(var s = 0; s < levels[this.levelIndex].loopshoots.length; s++){
-			//just pass in the level and the LoopShoot's index 
-			//and it will pull the rest from data
-			this.loopShoots[s] = new LoopShoot(this.levelIndex, s, this.ballRadius);
-			if(s == this.loopshootBeingEdited)
-				this.loopShoots[s].isBeingEdited = true;
+		if(_new){
+			this.loopshootBeingEdited = 0;
+			this.loopShoots.push(new LoopShoot(this.levelIndex, 0, this.ballRadius, true));
+			this.loopShoots[0].isBeingEdited = true;
 		}
+		else{
+			//populate the array from the data
+			for(var s = 0; s < levels[this.levelIndex].loopshoots.length; s++){
+				//just pass in the level and the LoopShoot's index 
+				//and it will pull the rest from data
+				this.loopShoots[s] = new LoopShoot(this.levelIndex, s, this.ballRadius);
+				if(s == this.loopshootBeingEdited)
+					this.loopShoots[s].isBeingEdited = true;
+			}
+		}
+
+		
 
 	}
 
@@ -89,6 +98,11 @@ class Game{
 			else if(_key == 'Space'){
 				//START LEVEL
 				this.setupLevel();
+				this.editorState = 'edit';
+			}
+			else if(_key == 'n'){
+				//START LEVEL (passing in true flag to start it as a new level with one loopshoot)
+				this.setupLevel(true);
 				this.editorState = 'edit';
 			}
 		}
@@ -148,6 +162,20 @@ class Game{
 			else if(_key == 'g'){
 				//EXPORT DUMP LEVEL DATA AS IS (stay in edit mode)
 				this.exportDumpLevel();
+			}
+			else if(_key == 'n'){
+
+				//if there is a loopshoot in the index that is marked as being edited, 
+				//tell it to stop editing
+				if(this.loopShoots.length > this.loopshootBeingEdited)
+					this.loopShoots[this.loopshootBeingEdited].isBeingEdited = false;
+
+				//set index being edited to the current length of the loopshoot array 
+				//(once we add one, that will be the index of the new last index)
+				this.loopshootBeingEdited = this.loopShoots.length;
+				//add a loopshoot and set it to be the one being edited
+				this.loopShoots.push(new LoopShoot(this.levelIndex, 0, this.ballRadius, true));
+				this.loopShoots[this.loopshootBeingEdited].isBeingEdited = true;
 			}
 		}
 
@@ -254,6 +282,7 @@ class Game{
 
 			context.fillStyle = '#8ac80b';
 			context.font = "24px Arial";
+			context.fillText('< N >    NEW BLANK LEVEL', canvas.width /2, 540);
 			context.fillText('< SPACE BAR >    TO START', canvas.width /2, 580);
 
 		}
@@ -264,10 +293,15 @@ class Game{
 
 			context.fillStyle = '#8ac80b';
 			context.font = "20px Arial";
-			context.fillText('< A/D > Cycle Points', canvas.width /2, canvas.height - 160);
-			context.fillText('< W/S > Cycle Loopshoots', canvas.width /2, canvas.height - 120);
-			context.fillText('< ARROWS > Position Selected Element', canvas.width /2, canvas.height - 80);
-			context.fillText('< SPACE > Toggle Show All', canvas.width /2, canvas.height - 40);
+			context.fillText('< A/D > Cycle Points', canvas.width /2, canvas.height - 120);
+			context.fillText('< W/S > Cycle Loopshoots', canvas.width /2, canvas.height - 90);
+			context.fillText('< ARROWS > Position Selected Element', canvas.width /2, canvas.height - 60);
+			context.fillText('< SPACE > Toggle Show All', canvas.width /2, canvas.height - 30);
+
+			context.fillText('< P > toggle points/collection point edit', canvas.width /2, canvas.height - 240);
+			context.fillText('< Y > Add Point (@ end)', canvas.width /2, canvas.height - 210);
+			context.fillText('< G > Generate Export Code', canvas.width /2, canvas.height - 180);
+			context.fillText('< N > Add Loopshoot', canvas.width /2, canvas.height - 150);
 			
 			//DRAW LOOPSHOOTS
 			for(var s = 0; s < this.loopShoots.length; s++){
@@ -278,93 +312,6 @@ class Game{
 		else if(this.editorState == 'export'){
 			
 		}
-
-
-
-
-
-		/*if(this.gameOver){
-
-			context.beginPath();
-			context.textAlign = "center";
-
-			context.font = "80px Luckiest Guy";
-			context.fillStyle = '#8ac80b';
-			context.fillText('GAME OVER', canvas.width /2, 270);
-
-			context.fillStyle = 'white';
-
-			context.font = "48px Luckiest Guy";
-			context.fillText('LoopShoots', canvas.width /2, 100);
-			context.fillText('SCORE:  ' + this.score, canvas.width /2, 450);
-
-			context.font = "20px Arial";
-			context.fillText('< SPACE BAR >    TO PLAY AGAIN', canvas.width /2, canvas.width - 50);
-			context.fillText('by Stipple3D', canvas.width /2 + 80, 125);
-			
-		}
-		else if(this.intro){
-			
-			context.beginPath();
-			context.textAlign = "center";
-
-
-			context.fillStyle = '#8ac80b';
-
-			context.font = "80px Luckiest Guy";
-			context.fillText('LoopShoots', canvas.width /2, 170);
-
-			context.fillStyle = 'white';
-			context.font = "32px Arial";
-			context.fillText('by Stipple3D', canvas.width /2 + 120, 210);
-
-			
-
-			context.font = "18px Arial";
-			context.fillText('1) MOVE LEFT / RIGHT  (ARROWS, WASD)', canvas.width /2, 340);
-			context.fillText('2) KEEP AS MANY BALLS UP AS YOU CAN', canvas.width /2, 390);
-			context.fillText('3) POINTS AND EXTRA BALLS FOR TIME SPENT', canvas.width /2, 440);
-			context.fillText('IN THE  "LOOPSHOOTS"', canvas.width /2, 465);
-
-			context.fillStyle = '#8ac80b';
-			context.font = "24px Arial";
-			context.fillText('< SPACE BAR >    TO START', canvas.width /2, 580);
-		}
-		else{
-
-			//RENDER LOOPSHOOTS
-			for(var s = 0; s < this.loopShoots.length; s++){
-				this.loopShoots[s].draw();
-			}
-
-			//write directions on screen
-			context.beginPath();
-
-			context.fillStyle = 'white';
-			context.font = "24px Luckiest Guy";
-
-			context.fillText('SCORE:  ' + this.score, 20, 30);
-			context.textAlign = "center";
-			context.fillText('NEXT BALL:  ' + (this.nextFreeBall - this.timeSpentInLoop), canvas.width /2 - 10, 30);
-			context.textAlign = "left";
-			context.font = "14px Arial";
-			context.fillText('by Stipple3D', canvas.width - 103, 47);
-
-			context.font = "28px Luckiest Guy";
-			context.fillText('LoopShoots', canvas.width - 180, 30);
-
-			context.fillStyle = '#8ac80b';
-			context.fillText('x  ' + this.ballCount, 30, 60);
-
-			//DRAW PADDLE
-			context.beginPath();
-			context.fillStyle = '#8ac80b';
-			context.strokeStyle = '#white';
-			context.rect(this.paddlePos.x - this.paddleWidth /2, this.paddlePos.y, this.paddleWidth, this.paddleHeight);
-			context.fill();
-			context.stroke();
-			
-		}*/
 
 		context.restore();
 	}

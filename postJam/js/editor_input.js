@@ -13,6 +13,7 @@ class InputHandler{
 		this.pPressed = false;
 		this.yPressed = false;
 		this.gPressed = false;
+		this.nPressed = false;
 
 		document.onkeydown = (e) =>{
 			if(e.key == 'ArrowLeft' && !this.leftArrowPressed){
@@ -64,6 +65,10 @@ class InputHandler{
 				this.gPressed = true;
 				game.keyPressed(e.key);
 			}
+			else if(e.key == 'n' && !this.nPressed){
+				this.nPressed = true;
+				game.keyPressed(e.key);
+			}
 		}
 
 		document.onkeyup = (e) =>{
@@ -80,6 +85,7 @@ class InputHandler{
 			else if(e.key == 'p') this.pPressed = false;
 			else if(e.key == 'y') this.yPressed = false;
 			else if(e.key == 'g') this.yPressed = false;
+			else if(e.key == 'n') this.nPressed = false;
 		};
 
 	}

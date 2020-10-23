@@ -1,27 +1,43 @@
 class LoopShoot{
-	constructor(_level, _lsIndex, _ballRadius){//NOTE: REMOVED BALLSPEED FROM GAME VERSION
+	constructor(_level, _lsIndex, _ballRadius, _new = false){//NOTE: REMOVED BALLSPEED FROM GAME VERSION
 
 		this.ballRadius = _ballRadius;
 
-		//position of center of the loopshoot
-		this.collectPosition = new Vector2D(levels[_level].loopshoots[_lsIndex].cpX, 
-											levels[_level].loopshoots[_lsIndex].cpY);
-
-		this.collectRadius = levels[_level].loopshoots[_lsIndex].cpRadius;
-
-		//array of Vector2D points
-		this.points = [];
-
-		for(var pt = 0; pt < levels[_level].loopshoots[_lsIndex].movePoints.length; pt++){
-			//add a point to points array
-			this.points[pt] = new Vector2D(levels[_level].loopshoots[_lsIndex].movePoints[pt].cX, 
-											levels[_level].loopshoots[_lsIndex].movePoints[pt].cY);
+		//if the incoming _new flag is true, this loopshoot is being added/starting the new level
+		//(start it at the center of the canvas and with 2 points so that it will work)
+		if(_new){
+			this.collectPosition = new Vector2D(canvas.width /2, canvas.height /2);
+			//TODO: setting in gameData/game?
+			this.collectRadius = 75;
+			//array of Vector2D points
+			this.points = [];
+			//add TWO points to points array (so that release angle calculation will work)
+			this.points.push(new Vector2D(canvas.width /2 + 40, canvas.height /2));
+			this.points.push(new Vector2D(canvas.width /2 + 80, canvas.height /2));
+			
 		}
-		
+		//if not new, use the level/lsIndex values to pull info from levelData
+		else{
+			//position of center of the loopshoot
+			this.collectPosition = new Vector2D(levels[_level].loopshoots[_lsIndex].cpX, 
+												levels[_level].loopshoots[_lsIndex].cpY);
+
+			this.collectRadius = levels[_level].loopshoots[_lsIndex].cpRadius;
+
+			//array of Vector2D points
+			this.points = [];
+
+			for(var pt = 0; pt < levels[_level].loopshoots[_lsIndex].movePoints.length; pt++){
+				//add a point to points array
+				this.points[pt] = new Vector2D(levels[_level].loopshoots[_lsIndex].movePoints[pt].cX, 
+												levels[_level].loopshoots[_lsIndex].movePoints[pt].cY);
+			}
+		}
+
 		//this.releaseAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
 		this.releaseAngle = Math.atan2(this.points[this.points.length -1].y - this.points[this.points.length -2].y, 
 										this.points[this.points.length -1].x - this.points[this.points.length -2].x);
-
+		
 		//is this loopshoot the one being edited?
 		this.isBeingEdited = false;
 		//which point index is the one currently being edited
